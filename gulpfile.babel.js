@@ -45,9 +45,21 @@ gulp.task('popup-html', ['clean'], () => {
     .pipe(gulp.dest('./build'))
 });
 
-gulp.task('get-source', ['clean'], () => {
-  return gulp.src('getPagesSource.js')
-    .pipe(plugins.rename('getPagesSource.js'))
+gulp.task('popup-css', ['clean'], () => {
+  return gulp.src('popup/src/index.css')
+    .pipe(plugins.rename('popup.css'))
+    .pipe(gulp.dest('./build'))
+});
+
+gulp.task('injection-lib', ['clean'], () => {
+  return gulp.src('injection/lib.js')
+    .pipe(plugins.rename('injectionLib.js'))
+    .pipe(gulp.dest('./build'))
+});
+
+gulp.task('injection', ['clean'], () => {
+  return gulp.src('injection/run.js')
+    .pipe(plugins.rename('injection.js'))
     .pipe(gulp.dest('./build'))
 });
 
@@ -60,9 +72,19 @@ gulp.task('clean', (cb) => {
   rimraf('./build', cb);
 });
 
-gulp.task('build', ['copy-manifest', 'popup-js', 'popup-html', 'event-js', 'content-js', 'get-source']);
+gulp.task('build', [
+  'copy-manifest',
+  'popup-js',
+  'popup-html',
+  'popup-css',
+  'event-js',
+  'content-js',
+  'injection-lib',
+  'injection'
+]);
 
 gulp.task('watch', ['default'], () => {
+  gulp.watch('injection/**/*', ['build']);
   gulp.watch('popup/**/*', ['build']);
   gulp.watch('content/**/*', ['build']);
   gulp.watch('event/**/*', ['build']);
